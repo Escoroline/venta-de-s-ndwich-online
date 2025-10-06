@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sándwich Clandestino - Pedido Online</title>
+    <style>
+        /* --- ESTILOS CSS GENERALES --- */
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0c0c0c; 
+            color: #f1c40f; 
+            overflow-x: hidden; 
+            text-align: center; 
+        }
+        /* IMAGEN DE FONDO: Ícono de Sándwich Clandestino (Mantengo este ícono de fondo) */
+        body::before { 
+            content: ""; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            /* URL del ícono de Sándwich Clandestino (para el fondo) */
+            background: url('https://i.imgur.com/wP8qF1M.png') center center no-repeat; 
+            background-size: 300px; 
+            opacity: 0.05; 
+            z-index: -1; 
+        }
+        header { 
+            padding: 30px; 
+            border-bottom: 2px solid #e67e22; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
+        header h1 { 
+            font-size: 2.5rem; 
+            margin: 0; 
+            color: #f1c40f; 
+            letter-spacing: 4px; 
+        }
+        .contact-btn {
+            background: #38c172;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .contact-btn:hover {
+            background: #28a745;
+        }
+        .menu-grid { 
+            max-width: 1000px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+            gap: 30px; 
+        }
+        .menu-item-visual { 
+            width: 200px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: transform 0.3s ease, opacity 0.3s ease; 
+        }
+        .menu-item-visual:hover { 
+            transform: scale(1.08); 
+            opacity: 0.9; 
+        }
+        .sandwich-image { 
+            width: 100%; 
+            height: 150px; 
+            border-radius: 15px; 
+            margin-bottom: 10px; 
+            object-fit: contain; 
+            border: 3px solid #f1c40f; 
+            background-position: center; 
+            background-size: contain; 
+            background-repeat: no-repeat; 
+            background-color: #333; /* Fondo oscuro si no hay imagen */
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.4); 
+            
+            /* --- Nuevos estilos para centrar el icono/emoji --- */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem; /* Tamaño del emoji/icono */
+        }
+        
+        .sandwich-name { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            color: #f1c40f; 
+        }
+        .description-container { 
+            display: none; 
+            max-width: 650px; 
+            margin: 40px auto; 
+            padding: 30px; 
+            background: #1a1a1a; 
+            border: 4px solid #f1c40f; 
+            border-radius: 12px; 
+            text-align: left; 
+            animation: fadeIn 0.5s ease forwards; 
+            position: relative; 
+        }
+        
+        .combo-selection {
+            margin-top: 25px; 
+            padding: 15px;
+            background: #252525;
+            border: 1px solid #e67e22;
+            border-radius: 8px;
+        }
+        .combo-selection label, .combo-selection select {
+            color: #f1c40f;
+            margin-right: 15px;
+        }
+        .combo-selection select {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 5px;
+            border: 1px solid #f1c40f;
+            border-radius: 5px;
+        }
+
+        /* --- Estilos para el Pop-up de Contacto --- */
+        #contact-modal {
+            display: none;
+            position: fixed;
+            z-index: 10001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 15% auto;
+            padding: 30px;
+            border: 3px solid #f1c40f;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            color: #fff;
+            position: relative;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-btn:hover, .close-btn:focus {
+            color: #f1c40f;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #contact-form input, #contact-form textarea, #contact-form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #e67e22;
+            border-radius: 5px;
+        }
+        #contact-form input, #contact-form textarea {
+            background: #252525;
+            color: #fff;
+        }
+        #contact-form button {
+            background: #f1c40f;
+            color: #0c0c0c;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        #contact-form button:hover {
+            background: #e67e22;
+        }
+        /* --- Fin Estilos de Contacto --- */
+        
+        /* --- Estilos de Animación "Sándwich en Moto" --- */
+        #confirmation-animation { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.9); 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 10000; 
+        }
+        
+        .animation-text { 
+            color: #f1c40f; 
+            font-size: 2rem; 
+            margin-bottom: 50px; 
+            text-shadow: 0 0 10px #e67e22;
+        }
+        
+        .walking-sandwich {
+            width: 150px;
+            height: 150px; 
+            position: absolute;
+            bottom: 20%; 
+            left: 0;
+            filter: drop-shadow(0 0 15px rgba(56, 193, 114, 0.7)); 
+            
+            /* --- ESTILOS PARA EL ÍCONO DEL SÁNDWICH --- */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem; /* Ajusta el tamaño del emoji */
+            color: #f1c40f; 
+            
+            /* Aplica la animación */
+            animation: walk-and-out 3s linear forwards; 
+        }
+
+        /* Simulación del CAMINO (Una línea horizontal) */
+        .walking-sandwich::before {
+            content: '';
+            position: absolute;
+            bottom: -30px; /* Posición del camino */
+            left: calc(-100vw + 75px); /* Inicia antes de la pantalla */
+            width: calc(300vw); /* Longitud que cruza toda la pantalla */
+            height: 5px;
+            background: #444; /* Color oscuro del camino */
+            z-index: -1;
+        }
+        
+        /* Simulación de pies/sombra moviéndose (Ajustado para el sándwich) */
+        .walking-sandwich::after {
+            content: '';
+            position: absolute;
+            bottom: -15px; 
+            left: 20%;
+            width: 60%;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            animation: bounce-on-road 0.2s infinite alternate; /* Efecto de rebote */
+        }
+
+        /* Keyframes: Mover el sándwich de izquierda a derecha y desaparecer */
+        @keyframes walk-and-out {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        /* Keyframes para el rebote */
+        @keyframes bounce-on-road {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); } /* Sube un poco más para el rebote */
+        }
+        /* --- Fin Estilos de Animación --- */
+
+        /* Estilos de Detalle y Recibo */
+        .description-content .icon-display { 
+            font-size: 6rem; /* Tamaño grande para el icono en la descripción */
+            display: block;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #f1c40f;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.7);
+        }
+        .product-info { font-size: 1rem; line-height: 1.6; margin-bottom: 20px; color: #ccc; }
+        .product-info strong { color: #f1c40f; }
+        .extras-selection { margin-top: 25px; padding-top: 20px; border-top: 1px dashed #e67e22; }
+        .extra-option { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 8px; background: #252525; border-radius: 5px; }
+        .extra-control { display: flex; align-items: center; }
+        .control-btn { background: #f1c40f; color: #0c0c0c; border: none; padding: 5px 12px; font-size: 1.2rem; cursor: pointer; border-radius: 50%; transition: background 0.2s; font-weight: bold; }
+        .control-btn:hover { background: #e67e22; }
+        .extra-count { color: #f1c40f; margin: 0 15px; width: 20px; text-align: center; }
+        .total-price-area { margin-top: 25px; padding: 15px; background: #000; border: 2px solid #e67e22; border-radius: 8px; text-align: center; }
+        .total-price-area p { font-size: 1.4rem; font-weight: bold; margin: 0; }
+        .total-price-area span { color: #38c172; margin-left: 10px; }
+        .action-buttons { display: flex; justify-content: space-around; margin-top: 30px; gap: 15px; }
+        .back-btn, .buy-btn { display: inline-block; padding: 12px 30px; font-weight: bold; border-radius: 30px; cursor: pointer; transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease; text-decoration: none; color: #000; flex-grow: 1; max-width: 45%; }
+        .back-btn { background: #e67e22; }
+        .back-btn::before { content: "🏠 "; }
+        .back-btn:hover { background: #f1c40f; transform: scale(1.05); box-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
+        .buy-btn { background: #38c172; color: #fff; }
+        .buy-btn::before { content: "🛒 "; }
+        .buy-btn:hover { background: #28a745; transform: scale(1.05); box-shadow: 0 0 15px rgba(56, 193, 114, 0.6); }
+        .receipt-container { display: none; max-width: 400px; margin: 40px auto; padding: 25px; background: #fff; border: 2px dashed #000; border-radius: 5px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); font-family: 'Courier New', Courier, monospace; color: #333; text-align: left; position: relative; overflow: hidden; animation: fadeIn 0.5s ease forwards; }
+        .receipt-container h3 { color: #e67e22; text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        .receipt-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
+        .receipt-item span:first-child { font-weight: normal; }
+        .receipt-total { border-top: 2px solid #000; padding-top: 10px; margin-top: 15px; display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: #38c172; }
+        .confirm-buy-btn { display: block; width: 80%; margin: 25px auto 10px auto; padding: 15px 20px; background: #e67e22; color: #fff; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1rem; transition: background 0.3s ease, transform 0.3s ease; }
+        .confirm-buy-btn:hover { background: #d35400; transform: translateY(-2px); }
+        
+        /* --- Estilo para el Campo de Dirección en el Recibo --- */
+        .delivery-address-area {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #e67e22;
+            border-radius: 5px;
+            background: #fcf8e3; /* Fondo claro para contraste */
+        }
+        .delivery-address-area input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+        /* --- Fin Estilo Dirección --- */
+
+        /* Loader */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0c0c0c; display: flex; align-items: center; justify-content: center; flex-direction: column; z-index: 9999; }
+        .layer { width: 150px; height: 40px; margin: 5px 0; border-radius: 8px; animation: bounce 1.5s infinite; }
+        .bread-top { background: #f5c469; animation-delay: 0s; }
+        .cheese { background: #f1c40f; animation-delay: 0.2s; }
+        .meat { background: #a04000; animation-delay: 0.4s; }
+        .bread-bottom { background: #f5c469; animation-delay: 0.6s; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="layer bread-top"></div>
+        <div class="layer cheese"></div>
+        <div class="layer meat"></div>
+        <div class="layer bread-bottom"></div>
+    </div>
+
+    <header>
+        <h1>Sándwich Clandestino</h1>
+        <button class="contact-btn" onclick="showContactModal()">Comunícate con Nosotros</button>
+    </header>
+
+    <div class="menu-grid" id="main-menu">
+        
+        <div class="menu-item-visual" onclick="showDescription('pollo-bruster', 5000, '🍗', 'Una exquisita combinación de pollo apanado bañado en salsa barbacoa, acompañado de hojas frescas de lechuga, finas rodajas de tomate y un huevo perfectamente cocido. Un sándwich nutritivo que guarda en su sabor el secreto de la felicidad.')">
+            <div class="sandwich-image" id="img-pollo-bruster">🍗</div> <div class="sandwich-name">Sándwich de Pollo Bruster</div>
+        </div>
+
+        <div class="menu-item-visual" onclick="showDescription('costillas', 5000, '🍖', 'Costillas marinadas durante doce años en una salsa barbacoa artesanal, salteadas al sartén para alcanzar su punto perfecto. Se complementa con lechuga fresca, tomate jugoso y un toque de huevo que realza su carácter único.')">
+            <div class="sandwich-image" id="img-costillas">🍖</div> <div class="sandwich-name">Sándwich de Costillas</div>
+        </div>
+
+        <div class="menu-item-visual" onclick="showDescription('tradicional', 7000, '🥪', 'El clásico que nunca pasa de moda: pan suave, jamón fino, lechuga crujiente, queso derretido y un toque de huevo, todo calentado a la perfección “en los hornos de Dios”. Un tributo al sabor de lo sencillo y auténtico.')">
+            <div class="sandwich-image" id="img-tradicional">🥪</div> <div class="sandwich-name">Sándwich Tradicional</div>
+        </div>
+
+        <div class="menu-item-visual" onclick="showDescription('hamburguesa', 7000, '🍔', 'Una fusión irresistible de sabores: pan artesanal, carne de hamburguesa jugosa y los mejores acompañamientos de un sándwich tradicional. Una experiencia que combina lo mejor de dos mundos en cada bocado.')">
+            <div class="sandwich-image" id="img-hamburguesa">🍔</div> <div class="sandwich-name">Sándwich Hamburguesa</div>
+        </div>
+    </div>
+    
+    <div class="description-container" id="product-description-container">
+    </div>
+
+    
+    <div class="receipt-container" id="receipt-container">
+    </div>
+
+    
+    <div id="confirmation-animation">
+        <div class="animation-text">¡Tu pedido está en camino!</div>
+        <div class="walking-sandwich">🥪</div> 
+    </div>
+
+    <div id="contact-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideContactModal()">&times;</span>
+            <h2>Envíanos un Mensaje (Vía Email)</h2>
+            <p>Se abrirá tu aplicación de correo para enviar un mensaje a sandwichword3@gmail.com</p>
+            <form id="contact-form">
+                <input type="text" id="contact-name" name="contact_name" placeholder="Tu Nombre" required>
+                <input type="email" id="contact-email" name="contact_email" placeholder="Tu Correo Electrónico" required>
+                <textarea id="contact-message" name="contact_message" placeholder="Escribe tu mensaje o sugerencia aquí..." rows="5" required></textarea>
+                <button type="submit">Abrir Correo y Enviar</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // *** CONFIGURACIÓN FINAL ***
+        // Número de celular de destino (Formato internacional sin el + inicial para URL de WhatsApp)
+        const RECIPIENT_PHONE = '573104438759'; 
+        
+        // Correo de destino para el formulario de contacto
+        const CONTACT_EMAIL = 'sandwichword3@gmail.com';
+
+        const EXTRA_PRICES = {
+            salsa: 500,
+            queso: 1000,
+            verdura: 1000,
+            combo: 2000 
+        };
+
+        const sandwichExtraState = {
+            'pollo-bruster': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 5000, name: 'Sándwich de Pollo Bruster' },
+            'costillas': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 5000, name: 'Sándwich de Costillas' },
+            'tradicional': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 7000, name: 'Sándwich Tradicional' },
+            'hamburguesa': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 7000, name: 'Sándwich Hamburguesa' }
+        };
+
+        function formatPrice(price) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price); }
+
+        function showDescription(id, basePrice, iconOrImageUrl, descriptionText) {
+            const container = document.getElementById('product-description-container');
+            const menu = document.getElementById('main-menu');
+            const receipt = document.getElementById('receipt-container');
+            
+            menu.style.display = 'none';
+            receipt.style.display = 'none';
+
+            let currentState = sandwichExtraState[id];
+            
+            if (!currentState) { 
+                currentState = { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: basePrice, name: document.querySelector(`#img-${id}`).nextElementSibling.textContent };
+                sandwichExtraState[id] = currentState;
+            } else {
+                currentState.basePrice = basePrice;
+                currentState.name = document.querySelector(`#img-${id}`).nextElementSibling.textContent;
+            }
+
+            // Determinar si es un icono o una imagen URL
+            let mediaHtml = '';
+            if (iconOrImageUrl.startsWith('http')) { // Es una URL de imagen
+                mediaHtml = `<img src="${iconOrImageUrl}" alt="Imagen del ${currentState.name}">`;
+            } else { // Es un icono/emoji
+                mediaHtml = `<span class="icon-display">${iconOrImageUrl}</span>`;
+            }
+
+            container.innerHTML = `
+                <div class="description-content">
+                    ${mediaHtml}
+                    <h3 style="color:#f1c40f; margin-bottom: 5px;">${currentState.name}</h3>
+                    <p class="product-info"><strong>El Secreto:</strong> ${descriptionText}</p>
+                </div>
+
+                <div class="combo-selection">
+                    <h4>¡Pídelo en Combo! (+${formatPrice(EXTRA_PRICES.combo)})</h4>
+                    <div class="extra-option">
+                        <span>Incluye Gaseosa (Manzana o Pepsi)</span>
+                        <div class="extra-control">
+                            <button class="control-btn" onclick="updateCombo('${id}', -1)">-</button>
+                            <span class="extra-count" id="${id}-combo-count">${currentState.combo}</span>
+                            <button class="control-btn" onclick="updateCombo('${id}', 1)">+</button>
+                        </div>
+                    </div>
+                    ${currentState.combo > 0 ? `
+                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <label for="${id}-soda-flavor">Sabor de Gaseosa:</label>
+                            <select id="${id}-soda-flavor" onchange="updateSodaFlavor('${id}', this.value)">
+                                <option value="">Selecciona</option>
+                                <option value="Manzana" ${currentState.sodaFlavor === 'Manzana' ? 'selected' : ''}>Manzana</option>
+                                <option value="Pepsi" ${currentState.sodaFlavor === 'Pepsi' ? 'selected' : ''}>Pepsi</option>
+                            </select>
+                        </div>
+                    ` : ''}
+                </div>
+
+
+                <div class="extras-selection">
+                    <h4>Añade Extras Clandestinos</h4>
+                    <div class="extra-option">
+                        <span>Más Salsa (+${formatPrice(EXTRA_PRICES.salsa)})</span>
+                        <div class="extra-control">
+                            <button class="control-btn" onclick="updateExtra('${id}', 'salsa', -1)">-</button>
+                            <span class="extra-count" id="${id}-salsa-count">${currentState.salsa}</span>
+                            <button class="control-btn" onclick="updateExtra('${id}', 'salsa', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="extra-option">
+                        <span>Más Queso (+${formatPrice(EXTRA_PRICES.queso)})</span>
+                        <div class="extra-control">
+                            <button class="control-btn" onclick="updateExtra('${id}', 'queso', -1)">-</button>
+                            <span class="extra-count" id="${id}-queso-count">${currentState.queso}</span>
+                            <button class="control-btn" onclick="updateExtra('${id}', 'queso', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="extra-option">
+                        <span>Más Verdura (+${formatPrice(EXTRA_PRICES.verdura)})</span>
+                        <div class="extra-control">
+                            <button class="control-btn" onclick="updateExtra('${id}', 'verdura', -1)">-</button>
+                            <span class="extra-count" id="${id}-verdura-count">${currentState.verdura}</span>
+                            <button class="control-btn" onclick="updateExtra('${id}', 'verdura', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-price-area">
+                    <p>Total a Pagar: <span id="${id}-total-price">${formatPrice(basePrice)}</span></p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="back-btn" onclick="hideDescription()">Regresar al Menú</button>
+                    <button class="buy-btn" onclick="showReceipt('${id}')">Comprar Ahora</button>
+                </div>
+            `;
+            
+            container.dataset.itemId = id;
+            
+            calculateTotal();
+
+            container.style.display = 'block';
+        }
+        
+        function updateCombo(itemId, change) {
+            const currentState = sandwichExtraState[itemId];
+            let newCount = currentState.combo + change;
+            if (newCount < 0) newCount = 0;
+            if (newCount > 1) newCount = 1;
+            
+            currentState.combo = newCount;
+            if (newCount === 0) currentState.sodaFlavor = null;
+
+            // Para que la descripción se actualice correctamente al cambiar el combo
+            const itemElement = document.querySelector(`.menu-item-visual[onclick*="${itemId}"]`);
+            const basePrice = currentState.basePrice; 
+            const iconOrImageUrl = itemElement.querySelector('.sandwich-image').textContent.trim(); // Obtiene el emoji del span
+            let descriptionText;
+            switch(itemId) {
+                case 'pollo-bruster': descriptionText = 'Una exquisita combinación de pollo apanado bañado en salsa barbacoa, acompañado de hojas frescas de lechuga, finas rodajas de tomate y un huevo perfectamente cocido. Un sándwich nutritivo que guarda en su sabor el secreto de la felicidad.'; break;
+                case 'costillas': descriptionText = 'Costillas marinadas durante doce años en una salsa barbacoa artesanal, salteadas al sartén para alcanzar su punto perfecto. Se complementa con lechuga fresca, tomate jugoso y un toque de huevo que realza su carácter único.'; break;
+                case 'tradicional': descriptionText = 'El clásico que nunca pasa de moda: pan suave, jamón fino, lechuga crujiente, queso derretido y un toque de huevo, todo calentado a la perfección “en los hornos de Dios”. Un tributo al sabor de lo sencillo y auténtico.'; break;
+                case 'hamburguesa': descriptionText = 'Una fusión irresistible de sabores: pan artesanal, carne de hamburguesa jugosa y los mejores acompañamientos de un sándwich tradicional. Una experiencia que combina lo mejor de dos mundos en cada bocado.'; break;
+                default: descriptionText = '';
+            }
+            
+            showDescription(itemId, basePrice, iconOrImageUrl, descriptionText);
+            
+            calculateTotal(); 
+        }
+
+        function updateSodaFlavor(itemId, flavor) {
+            sandwichExtraState[itemId].sodaFlavor = flavor;
+        }
+
+        function updateExtra(itemId, extraType, change) {
+            const countElement = document.getElementById(`${itemId}-${extraType}-count`);
+            let currentCount = parseInt(countElement.textContent);
+            let newCount = currentCount + change;
+            if (newCount < 0) newCount = 0;
+
+            sandwichExtraState[itemId][extraType] = newCount;
+            countElement.textContent = newCount;
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const container = document.getElementById('product-description-container');
+            const itemId = container.dataset.itemId;
+            
+            if (!itemId) return;
+
+            const currentState = sandwichExtraState[itemId];
+            let currentTotal = currentState.basePrice;
+
+            for (const [extraType, price] of Object.entries(EXTRA_PRICES)) {
+                if (extraType !== 'combo') {
+                    currentTotal += currentState[extraType] * price;
+                }
+            }
+            
+            // Suma el costo del combo si está activo
+            if (currentState.combo > 0) {
+                currentTotal += EXTRA_PRICES.combo;
+            }
+
+            // El elemento del precio podría no existir si no estamos en la vista de detalle
+            const priceElement = document.getElementById(`${itemId}-total-price`);
+            if (priceElement) {
+                priceElement.textContent = formatPrice(currentTotal);
+            }
+            currentState.totalPrice = currentTotal;
+        }
+
+
+        function hideDescription() {
+            document.getElementById('product-description-container').style.display = 'none';
+            document.getElementById('receipt-container').style.display = 'none';
+            document.getElementById('main-menu').style.display = 'flex';
+        }
+
+        function showReceipt(itemId) {
+            const currentState = sandwichExtraState[itemId];
+
+            if (currentState.combo > 0 && !currentState.sodaFlavor) {
+                alert('¡Atención! Debe seleccionar el sabor de la gaseosa (Manzana o Pepsi) para el combo.');
+                return; 
+            }
+            
+            const descriptionContainer = document.getElementById('product-description-container');
+            const receiptContainer = document.getElementById('receipt-container');
+            
+            descriptionContainer.style.display = 'none';
+            receiptContainer.style.display = 'block';
+
+            let receiptContent = `<h3>Recibo de Compra</h3>`;
+            
+            receiptContent += `<div class="receipt-item"><span>${currentState.name}</span><span>${formatPrice(currentState.basePrice)}</span></div>`;
+
+            if (currentState.combo > 0) {
+                receiptContent += `<div class="receipt-item" style="font-weight: bold; color: #e67e22;"><span>Combo: + Gaseosa (${currentState.sodaFlavor})</span><span>${formatPrice(EXTRA_PRICES.combo)}</span></div>`;
+            }
+
+            for (const [extraType, count] of Object.entries(currentState)) {
+                if (EXTRA_PRICES[extraType] && count > 0 && extraType !== 'combo') {
+                    const extraName = extraType.charAt(0).toUpperCase() + extraType.slice(1);
+                    receiptContent += `<div class="receipt-item"><span>+ ${count} ${extraName}</span><span>${formatPrice(count * EXTRA_PRICES[extraType])})</span></div>`;
+                }
+            }
+            
+            // Campo de Dirección (Nuevo)
+            receiptContent += `
+                <div class="delivery-address-area">
+                    <label for="delivery-address" style="color:#e67e22; font-weight:bold;">📍 Dirección de Envío del Pedido:</label>
+                    <input type="text" id="delivery-address" placeholder="Ej: Calle 10 # 5-20, Apto 302" required>
+                </div>
+            `;
+
+
+            receiptContent += `<div class="receipt-total"><span>Total</span><span>${formatPrice(currentState.totalPrice)}</span></div>`;
+            receiptContent += `<button class="confirm-buy-btn" onclick="confirmPurchase('${itemId}')">CONFIRMAR COMPRA Y ENVIAR</button>`;
+
+            receiptContainer.innerHTML = receiptContent;
+        }
+        
+        // Función para generar el enlace de WhatsApp
+        function generateWhatsAppLink(itemId) {
+            const currentState = sandwichExtraState[itemId];
+            
+            const deliveryAddressInput = document.getElementById('delivery-address');
+            if (!deliveryAddressInput || !deliveryAddressInput.value.trim()) {
+                return null;
+            }
+            const deliveryAddress = deliveryAddressInput.value.trim();
+
+            let message = `¡NUEVO PEDIDO Clandestino! 🔥\n\n`;
+            message += `*DIRECCIÓN DE ENTREGA:* ${deliveryAddress}\n`;
+            message += `------------------------------\n`;
+            message += `Sándwich: ${currentState.name}\n`;
+            
+            if (currentState.combo > 0) {
+                 message += `*COMBO:* Gaseosa ${currentState.sodaFlavor} (${formatPrice(EXTRA_PRICES.combo)})\n`;
+            }
+
+            for (const [extraType, count] of Object.entries(currentState)) {
+                if (EXTRA_PRICES[extraType] && count > 0 && extraType !== 'combo') {
+                    const extraName = extraType.charAt(0).toUpperCase() + extraType.slice(1);
+                    message += `*+ ${count} ${extraName}* (${formatPrice(count * EXTRA_PRICES[extraType])})\n`;
+                }
+            }
+            message += `------------------------------\n`;
+            message += `*TOTAL FINAL:* ${formatPrice(currentState.totalPrice)}\n\n`;
+            message += `_¡Esperamos tu delicioso Sándwich!_`;
+
+            const encodedMessage = encodeURIComponent(message);
+            
+            const whatsappUrl = `https://wa.me/${RECIPIENT_PHONE}?text=${encodedMessage}`;
+            
+            return whatsappUrl;
+        }
+
+        // FUNCIÓN DE CONFIRMACIÓN: Muestra animación y luego redirecciona a WhatsApp
+        function confirmPurchase(itemId) {
+            const addressInput = document.getElementById('delivery-address');
+            if (!addressInput || addressInput.value.trim() === '') {
+                alert('¡Por favor, ingresa tu dirección de envío para continuar!');
+                addressInput.focus();
+                return;
+            }
+
+            document.getElementById('receipt-container').style.display = 'none';
+            const animationContainer = document.getElementById('confirmation-animation');
+            const walkingSandwich = animationContainer.querySelector('.walking-sandwich');
+            
+            // 1. Mostrar la animación
+            animationContainer.style.display = 'flex'; 
+            
+            // 2. Reiniciar la animación del sándwich
+            walkingSandwich.style.animation = 'none';
+            void walkingSandwich.offsetWidth; 
+            walkingSandwich.style.animation = 'walk-and-out 3s linear forwards';
+            
+            // 3. Generar el enlace de WhatsApp
+            const url = generateWhatsAppLink(itemId);
+            
+            // 4. Redirigir a WhatsApp después de que la animación termine (3 segundos)
+            setTimeout(() => {
+                window.open(url, '_self'); 
+                animationContainer.style.display = 'none';
+                hideDescription(); 
+            }, 3000); 
+        }
+        
+
+        // --- FUNCIONES PARA MODAL DE CONTACTO (USO DE MAILTO) ---
+
+        function showContactModal() {
+            document.getElementById('contact-modal').style.display = 'flex';
+        }
+
+        function hideContactModal() {
+            document.getElementById('contact-modal').style.display = 'none';
+            document.getElementById('contact-form').reset();
+        }
+
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+
+            const subject = encodeURIComponent(`Consulta de ${name}`);
+            const body = encodeURIComponent(`De: ${name} (${email})\n\nMensaje:\n${message}`);
+
+            window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+            
+            hideContactModal();
+        });
+
+        // Oculta el loader de carga inicial
+        window.addEventListener("load", () => {
+            const loader = document.getElementById("loader");
+            setTimeout(() => loader.style.display = "none", 500); 
+        });
+    </script>
+
+</body>
+</html>
