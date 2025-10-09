@@ -56,6 +56,30 @@
         .contact-btn:hover {
             background: #28a745;
         }
+
+        /* --- NUEVO: ESTILOS DEL CARTEL DE HORARIO --- */
+        .schedule-banner {
+            background: #222; /* Fondo oscuro */
+            color: #f1c40f; /* Color amarillo */
+            padding: 15px 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 10px;
+            border: 2px solid #e67e22; /* Borde naranja */
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            gap: 15px; /* Espacio entre el icono y el texto */
+        }
+        .schedule-banner span {
+            font-size: 2rem; /* Tamaño del icono del reloj */
+            color: #38c172; /* Color verde para el reloj */
+        }
+        /* --- FIN ESTILOS DEL CARTEL DE HORARIO --- */
+
         .menu-grid { 
             max-width: 1000px; 
             margin: 40px auto; 
@@ -350,6 +374,10 @@
         <button class="contact-btn" onclick="showContactModal()">Comunícate con Nosotros</button>
     </header>
 
+    <div class="schedule-banner">
+        <span>⏰</span> Solo se atiende de 2PM a 10PM
+    </div>
+
     <div class="menu-grid" id="main-menu">
         
         <div class="menu-item-visual" onclick="showDescription('pollo-bruster', 5000, '🍗', 'Una exquisita combinación de pollo apanado bañado en salsa barbacoa, acompañado de hojas frescas de lechuga, finas rodajas de tomate y un huevo perfectamente cocido. Un sándwich nutritivo que guarda en su sabor el secreto de la felicidad.')">
@@ -364,8 +392,8 @@
             <div class="sandwich-image" id="img-tradicional">🥪</div> <div class="sandwich-name">Sándwich Tradicional</div>
         </div>
 
-        <div class="menu-item-visual" onclick="showDescription('hamburguesa', 7000, '🍔', 'Una fusión irresistible de sabores: pan artesanal, carne de hamburguesa jugosa y los mejores acompañamientos de un sándwich tradicional. Una experiencia que combina lo mejor de dos mundos en cada bocado.')">
-            <div class="sandwich-image" id="img-hamburguesa">🍔</div> <div class="sandwich-name">Sándwich Hamburguesa</div>
+        <div class="menu-item-visual" onclick="showDescription('hamburwinch', 7000, '🍔', '¡La explosión de sabor que esperabas! Pan artesanal, una jugosa carne de res a la parrilla, con los mejores acompañamientos de un sándwich tradicional. ¡Una verdadera Hamburwinch que te dejará pidiendo más!')">
+            <div class="sandwich-image" id="img-hamburwinch">🍔</div> <div class="sandwich-name">Hamburwinch</div>
         </div>
     </div>
     
@@ -416,7 +444,7 @@
             'pollo-bruster': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 5000, name: 'Sándwich de Pollo Bruster' },
             'costillas': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 5000, name: 'Sándwich de Costillas' },
             'tradicional': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 7000, name: 'Sándwich Tradicional' },
-            'hamburguesa': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 7000, name: 'Sándwich Hamburguesa' }
+            'hamburwinch': { salsa: 0, queso: 0, verdura: 0, combo: 0, sodaFlavor: null, basePrice: 7000, name: 'Hamburwinch' } // CAMBIO AQUÍ
         };
 
         function formatPrice(price) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price); }
@@ -540,7 +568,7 @@
                 case 'pollo-bruster': descriptionText = 'Una exquisita combinación de pollo apanado bañado en salsa barbacoa, acompañado de hojas frescas de lechuga, finas rodajas de tomate y un huevo perfectamente cocido. Un sándwich nutritivo que guarda en su sabor el secreto de la felicidad.'; break;
                 case 'costillas': descriptionText = 'Costillas marinadas durante doce años en una salsa barbacoa artesanal, salteadas al sartén para alcanzar su punto perfecto. Se complementa con lechuga fresca, tomate jugoso y un toque de huevo que realza su carácter único.'; break;
                 case 'tradicional': descriptionText = 'El clásico que nunca pasa de moda: pan suave, jamón fino, lechuga crujiente, queso derretido y un toque de huevo, todo calentado a la perfección “en los hornos de Dios”. Un tributo al sabor de lo sencillo y auténtico.'; break;
-                case 'hamburguesa': descriptionText = 'Una fusión irresistible de sabores: pan artesanal, carne de hamburguesa jugosa y los mejores acompañamientos de un sándwich tradicional. Una experiencia que combina lo mejor de dos mundos en cada bocado.'; break;
+                case 'hamburwinch': descriptionText = '¡La explosión de sabor que esperabas! Pan artesanal, una jugosa carne de res a la parrilla, con los mejores acompañamientos de un sándwich tradicional. ¡Una verdadera Hamburwinch que te dejará pidiendo más!'; break; // CAMBIO AQUÍ
                 default: descriptionText = '';
             }
             
@@ -747,7 +775,3 @@
 
 </body>
 </html>
-
-</body>
-</html>
-
